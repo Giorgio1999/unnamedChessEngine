@@ -12,9 +12,21 @@
     <ClCompile Include="src\UciHandler.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="Board.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="Piece.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\UciHandler.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="Board.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="Piece.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
