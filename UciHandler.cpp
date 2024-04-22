@@ -1,0 +1,69 @@
+#include "UciHandler.h"
+#include <iostream>
+#include <string>
+
+void Listen() {
+	std::string instruction = "";
+	while (std::getline(std::cin, instruction)) {
+		std::string key = instruction.substr(0, instruction.find(' '));
+		if (key == "uci") {
+			std::cout << "id name unnamedChessEngine\n";
+			std::cout << "id author G. Lovato\n";
+			std::cout << "uciok\n";
+			//TO DO: Boot engine
+		}
+		if (key == "isready") {
+			//TO DO: Check wheter ready
+			std::cout << "isreadyok\n";
+		}
+		if (key == "ucinewgame") {
+			//TO DO: Set up a new game
+			//std::cout << "setting up new game\n";
+		}
+		if (key == "position" && instruction.length()!=key.length()) {
+			std::string arguments = instruction.substr(key.length()+1, instruction.length());
+			std::string positionKey = arguments.substr(0, arguments.find(' '));
+			if (positionKey == "startpos") {
+				//TO DO: Set up game in start position
+				//std::cout << "setting up starting position\n";
+			}
+			else {
+				std::string fenString = arguments.substr(positionKey.length() + 1, arguments.length());
+				fenString = fenString.substr(0, fenString.find(' '));
+				//TO DO: Sent fen to parser and set up game in fen pos
+				//std::cout << "setting up fen: " << fenString << "\n";
+			}
+			if (instruction.find("moves")<instruction.length()) {
+				std::string moveHistory = instruction.substr(instruction.find("moves ") + 1 + 5, instruction.length());
+				//TO DO: Sent move history to parser and play moves on board
+				//std::cout << "parsing move history: " << moveHistory << "\n";
+			}
+		}
+		if (key == "go") {
+			std::string wTime;
+			std::string bTime;
+			if (instruction.length() != key.length()) {
+				std::string options = instruction.substr(instruction.find(' ') + 1, instruction.length());
+				if(options.find("wtime")<=options.length()){
+					wTime = options.substr(options.find("wtime") + 6, options.length());
+					wTime = wTime.substr(0, wTime.find(' '));
+				}
+				if (options.find("btime") <= options.length()) {
+					bTime = options.substr(options.find("btime") + 6, options.length());
+					bTime = bTime.substr(0, bTime.find(' '));
+				}
+			}
+			//TO DO: parse options and dispatch engine search, once finished return here and
+			std::string bestmove = "e7e5";
+			std::cout << "bestmove " << bestmove << "\n";
+			//std::cout << "dispatching engine, with: wtime " << wTime << ", btime " << bTime << "\n";
+		}
+		if (key == "stop") {
+			//TO DO: stop engine and return search results
+			//std::cout << "stopping\n";
+		}
+		if (key == "quit") {
+			return;
+		}
+	}
+}
