@@ -127,11 +127,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="UciHandler.cpp" />
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\UciHandler.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="UciHandler.h" />
+    <ClInclude Include="src\UciHandler.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
