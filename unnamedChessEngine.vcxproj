@@ -128,12 +128,18 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\Board.cpp" />
+    <ClCompile Include="src\Engine.cpp" />
+    <ClCompile Include="src\EngineController.cpp" />
+    <ClCompile Include="src\FenParser.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Piece.cpp" />
     <ClCompile Include="src\UciHandler.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Board.h" />
+    <ClInclude Include="src\Engine.h" />
+    <ClInclude Include="src\EngineController.h" />
+    <ClInclude Include="src\FenParser.h" />
     <ClInclude Include="src\Piece.h" />
     <ClInclude Include="src\UciHandler.h" />
   </ItemGroup>

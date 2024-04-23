@@ -4,8 +4,6 @@
 
 
 int main() {
-	//Listen();
-	Board board = Board();
-	std::cout << board.GetPieceAt(0).pieceType;
+	Listen();
 	return 0;
 }

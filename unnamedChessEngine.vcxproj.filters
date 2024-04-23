@@ -12,10 +12,19 @@
     <ClCompile Include="src\UciHandler.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="Board.cpp">
+    <ClCompile Include="src\Board.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="Piece.cpp">
+    <ClCompile Include="src\Piece.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EngineController.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\FenParser.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
@@ -23,10 +32,19 @@
     <ClInclude Include="src\UciHandler.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="Board.h">
+    <ClInclude Include="src\Board.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="Piece.h">
+    <ClInclude Include="src\Piece.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\EngineController.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\FenParser.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,8 +1,10 @@
 #include "UciHandler.h"
+#include "EngineController.h"
 #include <iostream>
 #include <string>
 
 void Listen() {
+	EngineController engineController = EngineController();
 	std::string instruction = "";
 	while (std::getline(std::cin, instruction)) {
 		std::string key = instruction.substr(0, instruction.find(' '));
@@ -10,21 +12,24 @@ void Listen() {
 			std::cout << "id name unnamedChessEngine\n";
 			std::cout << "id author G. Lovato\n";
 			std::cout << "uciok\n";
-			//TO DO: Boot engine
+			engineController.BootEngine();
 		}
 		if (key == "isready") {
-			//TO DO: Check wheter ready
+			while (!engineController.IsReady())
+			{
+				continue;
+			}
 			std::cout << "isreadyok\n";
 		}
 		if (key == "ucinewgame") {
-			//TO DO: Set up a new game
+			engineController.NewGame();
 			//std::cout << "setting up new game\n";
 		}
 		if (key == "position" && instruction.length()!=key.length()) {
 			std::string arguments = instruction.substr(key.length()+1, instruction.length());
 			std::string positionKey = arguments.substr(0, arguments.find(' '));
 			if (positionKey == "startpos") {
-				//TO DO: Set up game in start position
+				engineController.SetPosition();
 				//std::cout << "setting up starting position\n";
 			}
 			else {
@@ -64,6 +69,10 @@ void Listen() {
 		}
 		if (key == "quit") {
 			return;
+		}
+		//Custom keys from here on
+		if (key == "showboard") {
+			std::cout << engineController.ShowBoard() << "\n";
 		}
 	}
 }

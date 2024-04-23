@@ -16,3 +16,13 @@ struct Piece
 
 };
 
+struct PieceList {
+	Piece pieces[64];
+	bool whiteToMove = true;
+	bool whiteQueensideCastleRight = false;
+	bool whiteKingsideCastleRight = false;
+	bool blackQueensideCastleRight = false;
+	bool blackKingsideCastleRight = false;
+	bool isEnpassantable = false;
+};
+
