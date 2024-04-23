@@ -37,7 +37,7 @@ std::string Board::ShowBoard() {
 	std::string boardString = "";
 	for (int i = 7;i >= 0;i--) {
 		for (auto j = 0;j < 8;j++) {
-			boardString += GetPieceAt(i, j).color;
+			boardString += std::to_string(GetPieceAt(i, j).pieceType);
 		}
 		boardString += "\n";
 	}

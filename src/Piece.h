@@ -24,5 +24,7 @@ struct PieceList {
 	bool blackQueensideCastleRight = false;
 	bool blackKingsideCastleRight = false;
 	bool isEnpassantable = false;
+
+	PieceList();
 };
 

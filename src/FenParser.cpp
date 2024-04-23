@@ -2,11 +2,11 @@
 #include "Piece.h"
 
 PieceList Fen2PieceList(std::string fen) {
-	PieceList pieces;
+	PieceList pieces = PieceList();
 	auto position = fen.substr(0, fen.find_first_of(' '));
+	auto increment = 0;
 	for (int i = position.length()-1; i >= 0;i--) {
 		auto current = position[i];
-		auto increment = 0;
 		if (current != '/') {
 			switch (current) {
 				case 'r':
@@ -20,6 +20,7 @@ PieceList Fen2PieceList(std::string fen) {
 				case 'b':
 					pieces.pieces[increment] = Piece(false, bishop);
 					increment++;
+					break;
 				case 'q':
 					pieces.pieces[increment] = Piece(false, queen);
 					increment++;
@@ -27,6 +28,7 @@ PieceList Fen2PieceList(std::string fen) {
 				case 'k':
 					pieces.pieces[increment] = Piece(false, king);
 					increment++;
+					break;
 				case 'p':
 					pieces.pieces[increment] = Piece(false, pawn);
 					increment++;
@@ -42,6 +44,7 @@ PieceList Fen2PieceList(std::string fen) {
 				case 'B':
 					pieces.pieces[increment] = Piece(true, bishop);
 					increment++;
+					break;
 				case 'Q':
 					pieces.pieces[increment] = Piece(true, queen);
 					increment++;
@@ -49,6 +52,7 @@ PieceList Fen2PieceList(std::string fen) {
 				case 'K':
 					pieces.pieces[increment] = Piece(true, king);
 					increment++;
+					break;
 				case 'P':
 					pieces.pieces[increment] = Piece(true, pawn);
 					increment++;
@@ -112,7 +116,8 @@ PieceList Fen2PieceList(std::string fen) {
 			pieces.whiteToMove = false;
 			break;
 	}
-	auto castling = rights.substr(1, rights.find_first_of(' '));
+	//TO DO: fix castling and enpassant stuff
+	/*auto castling = rights.substr(1, rights.find_first_of(' '));
 	for (auto i = 0; i < castling.length(); i++) {
 		switch (castling[i]) {
 			case 'K':
@@ -140,6 +145,6 @@ PieceList Fen2PieceList(std::string fen) {
 			default:
 				pieces.isEnpassantable = true;
 		}
-	}
+	}*/
 	return pieces;
 }
