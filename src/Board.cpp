@@ -11,6 +11,6 @@ Board::~Board() {
 
 }
 
-Piece Board::GetPieceAt(int i) {
+Piece& Board::GetPieceAt(int i) {
 	return this->board[i];
 }
