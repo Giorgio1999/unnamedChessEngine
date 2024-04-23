@@ -7,6 +7,7 @@ class Board
 public:
 	Board();
 	~Board();
+	Piece GetPieceAt(int i);	//Retrieve piece at index. TO DO: retrieve Piece at row,colum
 
 private:
 	Piece board[64];
