@@ -117,7 +117,8 @@ PieceList Fen2PieceList(std::string fen) {
 			break;
 	}
 	//TO DO: fix castling and enpassant stuff
-	/*auto castling = rights.substr(1, rights.find_first_of(' '));
+	auto castling = rights.substr(2, rights.length()-1);
+	castling = castling.substr(0, castling.find_first_of(' '));
 	for (auto i = 0; i < castling.length(); i++) {
 		switch (castling[i]) {
 			case 'K':
@@ -135,7 +136,7 @@ PieceList Fen2PieceList(std::string fen) {
 				break;
 		}
 	}
-	auto enPassant = rights.substr(castling.length(), rights.length() - 1);
+	auto enPassant = rights.substr(castling.length()+3, rights.length() - 1);
 	enPassant = enPassant.substr(0, enPassant.find_first_of(' '));
 	for (auto i = 0; i < enPassant.length(); i++) {
 		switch (enPassant[i]) {
@@ -144,7 +145,8 @@ PieceList Fen2PieceList(std::string fen) {
 				break;
 			default:
 				pieces.isEnpassantable = true;
+				//TO DO: convert to position on board and turn on ghost
 		}
-	}*/
+	}
 	return pieces;
 }
