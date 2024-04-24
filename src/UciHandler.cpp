@@ -40,7 +40,7 @@ void Listen() {
 			}
 			if (instruction.find("moves")<instruction.length()) {
 				std::string moveHistory = instruction.substr(instruction.find("moves ") + 1 + 5, instruction.length());
-				//TO DO: Sent move history to parser and play moves on board
+				engineController.MakeMoves(moveHistory);
 				//std::cout << "parsing move history: " << moveHistory << "\n";
 			}
 		}

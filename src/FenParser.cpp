@@ -1,12 +1,14 @@
 #include "FenParser.h"
 #include "Piece.h"
+#include "Move.h"
+#include <string>
 
 PieceList Fen2PieceList(std::string fen) {
 	PieceList pieces = PieceList();
-	auto position = fen.substr(0, fen.find_first_of(' '));
-	auto increment = 0;
+	std::string position = fen.substr(0, fen.find_first_of(' '));
+	int increment = 0;
 	for (int i = position.length()-1; i >= 0;i--) {
-		auto current = position[i];
+		char current = position[i];
 		if (current != '/') {
 			switch (current) {
 				case 'r':
@@ -106,8 +108,8 @@ PieceList Fen2PieceList(std::string fen) {
 			}
 		}
 	}
-	auto rights = fen.substr(fen.find_first_of(' ') + 1, fen.length() - 1);
-	auto current = rights[0];
+	std::string rights = fen.substr(fen.find_first_of(' ') + 1, fen.length() - 1);
+	char current = rights[0];
 	switch (current) {
 		case 'w':
 			pieces.whiteToMove = true;
@@ -116,10 +118,10 @@ PieceList Fen2PieceList(std::string fen) {
 			pieces.whiteToMove = false;
 			break;
 	}
-	//TO DO: fix castling and enpassant stuff
-	auto castling = rights.substr(2, rights.length()-1);
+
+	std::string castling = rights.substr(2, rights.length()-1);
 	castling = castling.substr(0, castling.find_first_of(' '));
-	for (auto i = 0; i < castling.length(); i++) {
+	for (int i = 0; i < castling.length(); i++) {
 		switch (castling[i]) {
 			case 'K':
 				pieces.whiteKingsideCastleRight = true;
@@ -136,17 +138,15 @@ PieceList Fen2PieceList(std::string fen) {
 				break;
 		}
 	}
-	auto enPassant = rights.substr(castling.length()+3, rights.length() - 1);
+	std::string enPassant = rights.substr(castling.length()+3, rights.length() - 1);
 	enPassant = enPassant.substr(0, enPassant.find_first_of(' '));
-	for (auto i = 0; i < enPassant.length(); i++) {
-		switch (enPassant[i]) {
-			case '-':
-				pieces.isEnpassantable = false;
-				break;
-			default:
-				pieces.isEnpassantable = true;
-				//TO DO: convert to position on board and turn on ghost
-		}
+	if (enPassant == "-") {
+		pieces.isEnpassantable = false;
+	}
+	else {
+		Piece ghost = Piece(!pieces.whiteToMove, none);
+		ghost.isGhost = true;
+		pieces.pieces[Coord2Index(Str2Coord(enPassant))] = ghost;
 	}
 	return pieces;
 }

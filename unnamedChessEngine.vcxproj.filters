@@ -27,6 +27,9 @@
     <ClCompile Include="src\FenParser.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\Move.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\UciHandler.h">
@@ -45,6 +48,9 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\FenParser.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Move.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

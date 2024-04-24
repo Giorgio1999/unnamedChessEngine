@@ -1,6 +1,7 @@
 #include "Engine.h"
 #include "Board.h"
 #include "Piece.h"
+#include "Move.h"
 #include <string>
 
 Engine::Engine(){
@@ -13,6 +14,14 @@ void Engine::NewGame(){
 
 void Engine::SetPosition(PieceList pieces) {
 	board.SetPosition(pieces);
+}
+
+void Engine::MakeMove(Move move) {
+	board.MakeMove(move);
+}
+
+void Engine::UndoLastMove() {
+	board.UndoLastMove();
 }
 
 std::string Engine::ShowBoard() {
