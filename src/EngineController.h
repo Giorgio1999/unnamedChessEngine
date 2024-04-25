@@ -13,7 +13,7 @@ class EngineController {
 		void SetPosition();							//Sets starting position
 		void SetPosition(std::string fenString);	//Sets position to fen string
 		void MakeMoves(std::string moveHistory);	//Makes given moves on the board
-		std::string GetLegalMoves();						//Gets legalmoves
+		std::string GetLegalMoves();				//Gets legalmoves
 		bool IsReady();								//returns ready flag
 		std::string ShowBoard();					//Debug tool to display board in console
 };

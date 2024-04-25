@@ -29,13 +29,8 @@ Move::Move(int i1, int j1, int i2, int j2) {
 
 std::string Coord2Str(Coord coord) {
 	std::string tmp = "";
-	int xp1 = coord.x + 1;
-	int yp1 = coord.y + 1;
-	std::string col = "";
-	col += cols.at(coord.x);
-	std::string row = "";
-	row += rows.at(coord.y);
-	tmp = col + row;
+	tmp += cols.at(coord.x);
+	tmp += rows.at(coord.y);
 	return tmp;
 }
 
@@ -44,7 +39,7 @@ Coord Str2Coord(std::string coordString) {
 }
 
 std::string Move2Str(Move move) {
-	return Coord2Str(move.startCoord) + Coord2Str(move.targetCoord);
+	return Coord2Str(move.startCoord) + Coord2Str(move.targetCoord) + ((move.convertTo == none) ? "" : PieceType2Str(move.convertTo));
 }
 
 Move Str2Move(std::string moveString) {
