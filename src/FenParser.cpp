@@ -7,7 +7,7 @@ PieceList Fen2PieceList(std::string fen) {
 	PieceList pieces = PieceList();
 	std::string position = fen.substr(0, fen.find_first_of(' '));
 	int increment = 0;
-	for (int i = position.length()-1; i >= 0;i--) {
+	for (int i = 0; i < position.length();i++) {
 		char current = position[i];
 		if (current != '/') {
 			switch (current) {

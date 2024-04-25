@@ -1,6 +1,7 @@
 #include "Move.h"
 #include <string>
 #include <list>
+#include <cmath>
 
 Coord::Coord(){
 	x = 0;
@@ -34,16 +35,36 @@ std::string Move2Str(Move move) {
 }
 
 Move Str2Move(std::string moveString) {
-	return Move(Str2Coord(moveString.substr(0, 2)), Str2Coord(moveString.substr(2, 4)));
+	Move move = Move(Str2Coord(moveString.substr(0, 2)), Str2Coord(moveString.substr(2, 4)));
+	if (moveString.length() == 5) {
+		switch (moveString[moveString.length() - 1]) {
+			case 'q':
+				move.convertTo = queen;
+				break;
+			case 'n':
+				move.convertTo = knight;
+				break;
+			case 'b':
+				move.convertTo = bishop;
+				break;
+			case 'r':
+				move.convertTo = rook;
+				break;
+		}
+	}
+	return move;
 }
 
 std::list<Move> Str2Moves(std::string movesString) {
 	std::list<Move> moves;
 	std::string currentMove = "";
 	while (movesString.length() > 0) {
-		std::string currentMove = movesString.substr(0, movesString.find(' '));
+		std::string currentMove = movesString.substr(0, std::min(movesString.find(' '),movesString.length()));
 		moves.push_back(Str2Move(currentMove));
-		movesString = movesString.substr(currentMove.length(), movesString.length());
+		if (movesString.length() == currentMove.length()) {
+			break;
+		}
+		movesString = movesString.substr(currentMove.length()+1, movesString.length());
 	}
 	return moves;
 }
@@ -53,6 +74,10 @@ int Coord2Index(Coord coord) {
 }
 
 bool operator!=(Move lhs, Move rhs) {
+	return lhs.startCoord == rhs.startCoord && lhs.targetCoord == rhs.targetCoord;
+}
+
+bool operator==(Move lhs, Move rhs) {
 	return lhs.startCoord == rhs.startCoord && lhs.targetCoord == rhs.targetCoord;
 }
 
