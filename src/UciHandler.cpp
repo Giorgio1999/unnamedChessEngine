@@ -59,8 +59,7 @@ void Listen() {
 				}
 			}
 			//TO DO: parse options and dispatch engine search, once finished return here and
-			std::string bestmove = "e7e5";
-			std::cout << "bestmove " << bestmove << "\n";
+			std::cout << engineController.GetLegalMoves() << "\n";
 			//std::cout << "dispatching engine, with: wtime " << wTime << ", btime " << bTime << "\n";
 		}
 		if (key == "stop") {

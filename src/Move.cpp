@@ -22,8 +22,21 @@ Move::Move(Coord _startCoord, Coord _targetCoord) {
 	targetCoord = _targetCoord;
 }
 
+Move::Move(int i1, int j1, int i2, int j2) {
+	startCoord = Coord(i1, j1);
+	targetCoord = Coord(i2, j2);
+}
+
 std::string Coord2Str(Coord coord) {
-	return std::to_string(cols[coord.x]) + std::to_string(rows[coord.y]);
+	std::string tmp = "";
+	int xp1 = coord.x + 1;
+	int yp1 = coord.y + 1;
+	std::string col = "";
+	col += cols.at(coord.x);
+	std::string row = "";
+	row += rows.at(coord.y);
+	tmp = col + row;
+	return tmp;
 }
 
 Coord Str2Coord(std::string coordString) {
@@ -72,6 +85,7 @@ std::list<Move> Str2Moves(std::string movesString) {
 int Coord2Index(Coord coord) {
 	return coord.y * 8 + coord.x;
 }
+
 
 bool operator!=(Move lhs, Move rhs) {
 	return lhs.startCoord == rhs.startCoord && lhs.targetCoord == rhs.targetCoord;

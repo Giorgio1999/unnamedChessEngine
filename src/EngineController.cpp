@@ -38,3 +38,13 @@ bool EngineController::IsReady() {
 std::string EngineController::ShowBoard() {
 	return engine.ShowBoard();
 }
+
+std::string EngineController::GetLegalMoves() {
+	std::list<Move> moveList =  engine.GetLegalMoves();
+	std::string legalMoveList = "";
+	while(moveList.size()>0) {
+		legalMoveList += Move2Str(moveList.back()) + " ";
+		moveList.pop_back();
+	}
+	return legalMoveList;
+}

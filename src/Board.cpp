@@ -69,6 +69,10 @@ std::string Board::ShowBoard() {
 		boardString += std::to_string(GetPieceAt(i).pieceType);
 	}
 	boardString += "\n";
+	for (int i = 0;i < 64;i++) {
+		boardString += std::to_string(GetPieceAt(i).isGhost);
+	}
+	boardString += "\n";
 	return boardString;
 }
 
@@ -81,6 +85,7 @@ void Board::MakeMove(Move move) {
 	if(piece.pieceType==pawn && std::abs(move.startCoord-move.targetCoord>1)){	//Double pawn pushes
 		Piece ghost = Piece();
 		ghost.isGhost = true;
+		ghost.color = board.whiteToMove;
 		SetPieceAt(Coord(move.startCoord.x, move.startCoord.y + (move.startCoord - move.targetCoord)), ghost);
 		board.isEnpassantable = true;
 	}
@@ -144,4 +149,8 @@ void Board::RemoveAllCastleRights(bool color) {
 		board.blackKingsideCastleRight = false;
 		board.blackQueensideCastleRight = false;
 	}
+}
+
+bool Board::WhiteToMove() {
+	return board.whiteToMove;
 }

@@ -26,6 +26,7 @@ struct Move
 	PieceType convertTo = none;
 
 	Move();
+	Move(int i1, int j1, int i2, int j2);
 	Move(Coord _startCoord, Coord _targetCoord);
 };	
 

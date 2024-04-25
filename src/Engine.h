@@ -20,6 +20,12 @@ class Engine {
 		std::string ShowBoard();			//Debug tool to display current board in console
 
 		std::list<Move> GetLegalMoves();	//Gets legal moves
+		void GetLegalPawnMoves(std::list<Move>& moveList, Piece current, int i, int j);	//function for every piecetype
+		void GetLegalKnightMoves(std::list<Move>& moveList, Piece current, int i, int j);
+		void GetLegalBishopMoves(std::list<Move>& moveList, Piece current, int i, int j);
+		void GetLegalRookMoves(std::list<Move>& moveList, Piece current, int i, int j);
+		void GetLegalQueenMoves(std::list<Move>& moveList, Piece current, int i, int j);
+		void GetLegalKingMoves(std::list<Move>& moveList, Piece current, int i, int j);
 		//void MakeMove(Move move);
 		//void UndoMove(Move move);
 		//bool InitialiseBoard(bool isStartpos, string fen="noFen");

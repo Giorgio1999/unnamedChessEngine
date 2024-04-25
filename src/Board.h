@@ -23,6 +23,7 @@ public:
 	void UndoLastMove();								//Revert to previous position
 	void BustGhosts();									//Removes Ghosts
 	void RemoveAllCastleRights(bool color);				//Sets all castle rights to false of given color
+	bool WhiteToMove();									//Return white to move
 
 private:
 	PieceList board;
