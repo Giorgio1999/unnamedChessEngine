@@ -35,7 +35,7 @@ void Listen() {
 			else {
 				std::string fenString = arguments.substr(positionKey.length() + 1, arguments.length());
 				fenString = fenString.substr(0, fenString.find(' '));
-				//TO DO: Sent fen to parser and set up game in fen pos
+				engineController.SetPosition(fenString);
 				//std::cout << "setting up fen: " << fenString << "\n";
 			}
 			if (instruction.find("moves")<instruction.length()) {

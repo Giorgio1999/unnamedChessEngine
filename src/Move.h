@@ -40,3 +40,4 @@ int Coord2Index(Coord coord);				//convert between coord and 1d Board index
 bool operator!=(Move lhs, Move rhs);		//To compare moves
 bool operator==(Move lhs, Move rhs);
 bool operator==(Coord lhs, Coord rhs);		//To compare coords
+int operator-(Coord lhs, Coord rhs);		//To find double pushes

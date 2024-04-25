@@ -19,8 +19,10 @@ public:
 	void Clear();										//Clears board (places white non pieces)
 	void SetPosition(PieceList pieces);					//Sets the whole board to a given PieceList
 	std::string ShowBoard();							//Debugging function to get string of simple board representation
-	void MakeMove(Move move);							//Make a move
+	void MakeMove(Move move);							//Make a move, will make any move not only legal moves
 	void UndoLastMove();								//Revert to previous position
+	void BustGhosts();									//Removes Ghosts
+	void RemoveAllCastleRights(bool color);				//Sets all castle rights to false of given color
 
 private:
 	PieceList board;

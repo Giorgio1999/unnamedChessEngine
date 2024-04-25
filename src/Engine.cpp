@@ -3,6 +3,7 @@
 #include "Piece.h"
 #include "Move.h"
 #include <string>
+#include <list>
 
 Engine::Engine(){
 	this->board = Board();
@@ -27,3 +28,4 @@ void Engine::UndoLastMove() {
 std::string Engine::ShowBoard() {
 	return board.ShowBoard();
 }
+
