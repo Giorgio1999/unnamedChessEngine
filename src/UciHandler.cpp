@@ -74,5 +74,8 @@ void Listen() {
 		if (key == "showboard") {
 			std::cout << engineController.ShowBoard() << "\n";
 		}
+		if (key == "legalmoves") {
+			std::cout << engineController.GetLegalMoves() << "\n";
+		}
 	}
 }

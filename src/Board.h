@@ -24,6 +24,7 @@ public:
 	void BustGhosts();									//Removes Ghosts
 	void RemoveAllCastleRights(bool color);				//Sets all castle rights to false of given color
 	bool WhiteToMove();									//Return white to move
+	int GetCastleRights(bool color);					//Returns an integer which encodes the castle rights for the given color: 0=none, 1=queen, 2=king, 3=both
 
 private:
 	PieceList board;

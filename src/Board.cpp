@@ -95,7 +95,6 @@ void Board::MakeMove(Move move) {
 	}
 	BustGhosts();
 	SetPieceAt(move.startCoord, Piece());
-	piece.hasMoved = true;
 	if (piece.pieceType == pawn && std::abs(move.startCoord.y-move.targetCoord.y)>1) {	//Double pawn pushes
 		Piece ghost = Piece();
 		ghost.isGhost = true;
@@ -137,8 +136,37 @@ void Board::MakeMove(Move move) {
 	}
 	else {	//Default move making
 		SetPieceAt(move.targetCoord, piece);
+		if (piece.pieceType == rook && !piece.hasMoved) {
+			if (move.startCoord.x == 0) {
+				if (board.whiteToMove) {
+					board.whiteKingsideCastleRight = false;
+				}
+				else {
+					board.blackKingsideCastleRight = false;
+				}
+			}
+			if (move.startCoord.x == 7) {
+				if (board.whiteToMove) {
+					board.whiteQueensideCastleRight = false;
+				}
+				else {
+					board.blackQueensideCastleRight = false;
+				}
+			}
+		}
+		if (piece.pieceType == king && !piece.hasMoved) {
+			if (board.whiteToMove) {
+				board.whiteKingsideCastleRight = false;
+				board.whiteQueensideCastleRight = false;
+			}
+			else {
+				board.blackKingsideCastleRight = false;
+				board.blackQueensideCastleRight = false;
+			}
+		}
 	}
 	board.whiteToMove = !board.whiteToMove;
+	piece.hasMoved = true;
 }
 
 void Board::UndoLastMove() {
@@ -168,4 +196,31 @@ void Board::RemoveAllCastleRights(bool color) {
 
 bool Board::WhiteToMove() {
 	return board.whiteToMove;
+}
+
+int Board::GetCastleRights(bool color) {
+	int res = 0;
+	if (color) {
+		if (board.whiteKingsideCastleRight) {
+			res = 1;
+		}
+		else if (board.whiteQueensideCastleRight) {
+			res = 2;
+		}
+		if (board.whiteKingsideCastleRight && board.whiteQueensideCastleRight) {
+			res = 3;
+		}
+	}
+	else {
+		if (board.blackKingsideCastleRight) {
+			res = 1;
+		}
+		else if (board.blackQueensideCastleRight) {
+			res = 2;
+		}
+		if (board.blackKingsideCastleRight && board.blackQueensideCastleRight) {
+			res = 3;
+		}
+	}
+	return res;
 }
