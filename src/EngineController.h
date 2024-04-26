@@ -16,4 +16,5 @@ class EngineController {
 		std::string GetLegalMoves();				//Gets legalmoves
 		bool IsReady();								//returns ready flag
 		std::string ShowBoard();					//Debug tool to display board in console
+		std::string Search();
 };

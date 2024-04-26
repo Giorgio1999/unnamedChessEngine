@@ -48,3 +48,7 @@ std::string EngineController::GetLegalMoves() {
 	}
 	return legalMoveList;
 }
+
+std::string EngineController::Search() {
+	return engine.GetBestMove();
+}

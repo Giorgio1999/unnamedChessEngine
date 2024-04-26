@@ -26,6 +26,8 @@ class Engine {
 		void GetLegalRookMoves(std::list<Move>& moveList, Piece current, int i, int j);
 		void GetLegalQueenMoves(std::list<Move>& moveList, Piece current, int i, int j);
 		void GetLegalKingMoves(std::list<Move>& moveList, Piece current, int i, int j);
+		
+		std::string GetBestMove();
 		//void MakeMove(Move move);
 		//void UndoMove(Move move);
 		//bool InitialiseBoard(bool isStartpos, string fen="noFen");

@@ -19,7 +19,7 @@ void Listen() {
 			{
 				continue;
 			}
-			std::cout << "isreadyok\n";
+			std::cout << "readyok\n";
 		}
 		if (key == "ucinewgame") {
 			engineController.NewGame();
@@ -59,7 +59,8 @@ void Listen() {
 				}
 			}
 			//TO DO: parse options and dispatch engine search, once finished return here and
-			std::cout << engineController.GetLegalMoves() << "\n";
+			std::string bestmove = "bestmove " + engineController.Search();
+			std::cout << bestmove << "\n";
 			//std::cout << "dispatching engine, with: wtime " << wTime << ", btime " << bTime << "\n";
 		}
 		if (key == "stop") {

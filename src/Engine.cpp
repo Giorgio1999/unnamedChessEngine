@@ -203,3 +203,6 @@ void Engine::GetLegalQueenMoves(std::list<Move>& moveList, Piece current, int i,
 
 void Engine::GetLegalKingMoves(std::list<Move>& moveList, Piece current, int i, int j){}
 
+std::string Engine::GetBestMove() {
+	return Move2Str(GetLegalMoves().front());
+}
