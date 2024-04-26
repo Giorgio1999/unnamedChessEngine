@@ -19,6 +19,6 @@ PieceList::PieceList() {
 
 std::string PieceType2Str(PieceType type) {
 	std::string tmp = "";
-	tmp += types.at(type);
+	tmp += types.at((int)type);
 	return tmp;
 }

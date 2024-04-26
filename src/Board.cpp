@@ -47,6 +47,12 @@ void Board::SetPosition(PieceList pieces) {
 	for (auto i = 0; i < 64; i++) {
 		board.pieces[i] = pieces.pieces[i];
 	}
+	board.whiteKingsideCastleRight = pieces.whiteKingsideCastleRight;
+	board.whiteQueensideCastleRight = pieces.whiteQueensideCastleRight;
+	board.blackKingsideCastleRight = pieces.blackKingsideCastleRight;
+	board.blackQueensideCastleRight = pieces.blackQueensideCastleRight;
+	board.isEnpassantable = pieces.isEnpassantable;
+	board.whiteToMove = pieces.whiteToMove;
 }
 
 std::string Board::ShowBoard() {
@@ -69,24 +75,33 @@ std::string Board::ShowBoard() {
 		boardString += std::to_string(GetPieceAt(i).pieceType);
 	}
 	boardString += "\n";
-	for (int i = 0;i < 64;i++) {
-		boardString += std::to_string(GetPieceAt(i).isGhost);
+	for (int y = 0;y < 8;y++) {
+		for (int x = 0;x < 8;x++) {
+			boardString += std::to_string(GetPieceAt(x, y).isGhost);
+		}
+		boardString += "\n";
 	}
 	boardString += "\n";
 	return boardString;
 }
 
 void Board::MakeMove(Move move) {
-	BustGhosts();
 	gameHistory.push_back(board);								//Store position in game history
 	Piece piece = GetPieceAt(move.startCoord);
+	if (GetPieceAt(move.targetCoord).isGhost) {
+		int sign = board.whiteToMove ? 1 : -1;
+		Piece ghoster = Piece();
+		SetPieceAt(Coord(move.targetCoord.x, move.targetCoord.y + sign), ghoster);
+	}
+	BustGhosts();
 	SetPieceAt(move.startCoord, Piece());
 	piece.hasMoved = true;
-	if(piece.pieceType==pawn && std::abs(move.startCoord-move.targetCoord>1)){	//Double pawn pushes
+	if (piece.pieceType == pawn && std::abs(move.startCoord.y-move.targetCoord.y)>1) {	//Double pawn pushes
 		Piece ghost = Piece();
 		ghost.isGhost = true;
 		ghost.color = board.whiteToMove;
-		SetPieceAt(Coord(move.startCoord.x, move.startCoord.y + (move.startCoord - move.targetCoord)), ghost);
+		int sign = board.whiteToMove ? 1 : -1;
+		SetPieceAt(Coord(move.targetCoord.x, move.targetCoord.y + sign), ghost);
 		board.isEnpassantable = true;
 	}
 	if (move.convertTo != none) {	//Pawn promotion

@@ -109,8 +109,97 @@ void Engine::GetLegalPawnMoves(std::list<Move>& moveList, Piece current, int i, 
 }
 
 void Engine::GetLegalKnightMoves(std::list<Move>& moveList, Piece current, int i, int j){}
-void Engine::GetLegalBishopMoves(std::list<Move>& moveList, Piece current, int i, int j){}
-void Engine::GetLegalRookMoves(std::list<Move>& moveList, Piece current, int i, int j){}
-void Engine::GetLegalQueenMoves(std::list<Move>& moveList, Piece current, int i, int j){}
+
+void Engine::GetLegalBishopMoves(std::list<Move>& moveList, Piece current, int i, int j){
+	for (int n = 1;n < std::min(8-i,8-j);n++) {
+		Piece other = board.GetPieceAt(i + n, j + n);
+		if (other.color == current.color && other.pieceType != none) {
+			break;
+		}
+		moveList.push_back(Move(i, j, i + n, j + n));
+		if (other.color != current.color && other.pieceType != none) {
+			break;
+		}
+	}
+	for (int n = 1;n <= std::min(i, j);n++) {
+		Piece other = board.GetPieceAt(i - n, j - n);
+		if (other.color == current.color && other.pieceType != none) {
+			break;
+		}
+		moveList.push_back(Move(i, j, i - n, j - n));
+		if (other.color != current.color && other.pieceType != none) {
+			break;
+		}
+	}
+	for (int n = 1;n <= std::min(7 - i, j);n++) {
+		Piece other = board.GetPieceAt(i + n, j - n);
+		if (other.color == current.color && other.pieceType != none) {
+			break;
+		}
+		moveList.push_back(Move(i, j, i + n, j - n));
+		if (other.color != current.color && other.pieceType != none) {
+			break;
+		}
+	}
+	for (int n = 1;n <= std::min(i, 8 - j - 1);n++) {
+		Piece other = board.GetPieceAt(i - n, j + n);
+		if (other.color == current.color && other.pieceType != none) {
+			break;
+		}
+		moveList.push_back(Move(i, j, i - n, j + n));
+		if (other.color != current.color && other.pieceType != none) {
+			break;
+		}
+	}
+}
+
+void Engine::GetLegalRookMoves(std::list<Move>& moveList, Piece current, int i, int j){
+	for (int n = i+1;n < 8;n++) {
+		Piece other = board.GetPieceAt(n, j);
+		if (other.color == current.color && other.pieceType != none) {
+			break;
+		}
+		moveList.push_back(Move(i, j, n, j));
+		if (other.color != current.color && other.pieceType != none) {
+			break;
+		}
+	}
+	for (int n = i-1;n >=0;n--) {
+		Piece other = board.GetPieceAt(n, j);
+		if (other.color == current.color && other.pieceType != none) {
+			break;
+		}
+		moveList.push_back(Move(i, j, n, j));
+		if (other.color != current.color && other.pieceType != none) {
+			break;
+		}
+	}
+	for (int n = j+1;n < i;n++) {
+		Piece other = board.GetPieceAt(n, j);
+		if (other.color == current.color && other.pieceType != none) {
+			break;
+		}
+		moveList.push_back(Move(i, j, i, n));
+		if (other.color != current.color && other.pieceType != none) {
+			break;
+		}
+	}
+	for (int n = j-1;n >= 0;n--) {
+		Piece other = board.GetPieceAt(n, j);
+		if (other.color == current.color && other.pieceType != none) {
+			break;
+		}
+		moveList.push_back(Move(i, j, i, n));
+		if (other.color != current.color && other.pieceType != none) {
+			break;
+		}
+	}
+}
+
+void Engine::GetLegalQueenMoves(std::list<Move>& moveList, Piece current, int i, int j){
+	GetLegalRookMoves(moveList, current, i, j);
+	GetLegalBishopMoves(moveList, current, i, j);
+}
+
 void Engine::GetLegalKingMoves(std::list<Move>& moveList, Piece current, int i, int j){}
 

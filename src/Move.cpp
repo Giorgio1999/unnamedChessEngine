@@ -39,7 +39,13 @@ Coord Str2Coord(std::string coordString) {
 }
 
 std::string Move2Str(Move move) {
-	return Coord2Str(move.startCoord) + Coord2Str(move.targetCoord) + ((move.convertTo == none) ? "" : PieceType2Str(move.convertTo));
+	std::string tmp = "";
+	tmp += Coord2Str(move.startCoord);
+	tmp += Coord2Str(move.targetCoord);
+	if (move.convertTo != none) {
+		tmp += PieceType2Str(move.convertTo);
+	}
+	return tmp;
 }
 
 Move Str2Move(std::string moveString) {
@@ -67,7 +73,7 @@ std::list<Move> Str2Moves(std::string movesString) {
 	std::list<Move> moves;
 	std::string currentMove = "";
 	while (movesString.length() > 0) {
-		std::string currentMove = movesString.substr(0, std::min(movesString.find(' '),movesString.length()));
+		std::string currentMove = movesString.substr(0, movesString.find(' '));
 		moves.push_back(Str2Move(currentMove));
 		if (movesString.length() == currentMove.length()) {
 			break;
