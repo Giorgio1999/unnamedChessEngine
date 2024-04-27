@@ -100,6 +100,11 @@ bool operator==(Coord lhs, Coord rhs) {
 	return lhs.x == rhs.x && lhs.y == rhs.y;
 }
 
+bool operator!=(Coord lhs, Coord rhs) {
+	
+	return lhs.x != rhs.x || lhs.y != rhs.y;
+}
+
 int operator-(Coord lhs, Coord rhs) {
 	return lhs.y - rhs.y;
 }

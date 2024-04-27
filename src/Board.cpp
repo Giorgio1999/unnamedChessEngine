@@ -81,7 +81,19 @@ std::string Board::ShowBoard() {
 		}
 		boardString += "\n";
 	}
-	boardString += "\n" + std::to_string(checkLines.size()) + "\n";
+	boardString += "\n";
+	for (int i = 0;i < checkLines.size();i++) {
+		std::list<Coord> current = checkLines.back();
+		for (int j = 0;j < current.size();j++) {
+			boardString += Coord2Str(current.back());
+			Coord tmp = current.back();
+			current.pop_back();
+			current.push_front(tmp);
+		}
+		checkLines.pop_back();
+		checkLines.push_front(current);
+		boardString += "\n";
+	}
 
 	return boardString;
 }
@@ -228,7 +240,7 @@ int Board::GetCastleRights(bool color) {
 }
 
 void Board::UpdateCheckLines() {
-	std::list<std::list<Coord>> checkLines;
+	std::list<std::list<Coord>> newCheckLines;
 	Coord kingCoord;
 	Piece current;
 	for (int i = 0;i < 8;i++) {
@@ -245,13 +257,13 @@ void Board::UpdateCheckLines() {
 			if (current.color != board.whiteToMove) {
 				switch (current.pieceType) {
 					case rook:
-						checkLines.push_back(GetLineOfCoords(Coord(i, j), kingCoord));
+						newCheckLines.push_back(GetLineOfCoords(Coord(i, j), kingCoord));
 						break;
 					case bishop:
-						checkLines.push_back(GetLineOfCoords(Coord(i, j), kingCoord));
+						newCheckLines.push_back(GetLineOfCoords(Coord(i, j), kingCoord));
 						break;
 					case queen:
-						checkLines.push_back(GetLineOfCoords(Coord(i, j), kingCoord));
+						newCheckLines.push_back(GetLineOfCoords(Coord(i, j), kingCoord));
 						break;
 					case knight:
 						break;
@@ -261,45 +273,49 @@ void Board::UpdateCheckLines() {
 			}
 		}
 	}
+	checkLines = newCheckLines;
 }
 
 std::list<Coord> Board::GetLineOfCoords(Coord start, Coord target) {
 	std::list<Coord> coordLine;
 	bool appendable = true;
 	if (start.x - target.x == 0) {
-		int sign = start.y > target.y ? 1 : -1;
+		int sign = start.y < target.y ? 1 : -1;
+		int I = start.x + sign;
 		coordLine.push_back(start);
-		for (int i = start.y+1;i < target.y;i += sign) {
-			if (GetPieceAt(start.x, i).pieceType != none) {
-				appendable = false;
-				break;
+		while (I != target.y - sign) {
+			if (GetPieceAt(start.x, I).pieceType != none) {
+				isCheck = true;
 			}
-			coordLine.push_back(Coord(start.x, i));
+			coordLine.push_back(Coord(start.x, I));
+			I += sign;
 		}
 	}
 	else if(start.y-target.y == 0){
-		int sign = start.x > target.x ? 1 : -1;
+		int sign = start.x < target.x ? 1 : -1;
+		int I = start.x+sign;
 		coordLine.push_back(start);
-		for (int i = start.x+1;i < target.x;i += sign) {
-			if (GetPieceAt(i, start.y).pieceType != none) {
-				appendable = false;
-				break;
+		while (I != target.x - sign) {
+			if (GetPieceAt(I, start.y).pieceType != none) {
+				isCheck = true;
 			}
-			coordLine.push_back(Coord(i, start.y));
+			coordLine.push_back(Coord(I, start.y));
+			I += sign;
 		}
 	}
 	else if (std::abs(start.x - target.x) == std::abs(start.y - target.y)) {
-		int signX = start.x > target.x ? 1 : -1;
-		int signY = start.y > target.y ? 1 : -1;
+		int signX = start.x < target.x ? 1 : -1;
+		int signY = start.y < target.y ? 1 : -1;
+		int I = start.x + signX;
+		int J = start.y + signY;
 		coordLine.push_back(start);
-		for (int n = 1;n < std::abs(start.x - target.x);n++) {
-			int I = start.x + signX * n;
-			int J = start.y + signY * n;
+		while (I != target.x && J != target.y) {
 			if (GetPieceAt(I, J).pieceType != none) {
-				appendable = false;
-				break;
+				isCheck = true;
 			}
 			coordLine.push_back(Coord(I, J));
+			I += signX;
+			J += signY;
 		}
 	}
 	if (appendable) {
@@ -307,4 +323,12 @@ std::list<Coord> Board::GetLineOfCoords(Coord start, Coord target) {
 	}
 	std::list<Coord> null;
 	return null;
+}
+
+std::list<std::list<Coord>>& Board::GetCheckLines() {
+	return checkLines;
+}
+
+bool Board::GetCheck() {
+	return isCheck;
 }

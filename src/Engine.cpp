@@ -29,7 +29,7 @@ std::string Engine::ShowBoard() {
 	return board.ShowBoard();
 }
 
-std::list<Move> Engine::GetLegalMoves() {
+std::list<Move> Engine::GetPseudoLegalMoves() {
 	std::list<Move> moveList;
 	for (int i = 0;i < 8;i++) {
 		for (int j = 0;j < 8;j++) {
@@ -39,22 +39,22 @@ std::list<Move> Engine::GetLegalMoves() {
 					case none:
 						break;
 					case pawn:
-						GetLegalPawnMoves(moveList, current, i, j);
+						GetPseudoLegalPawnMoves(moveList, current, i, j);
 						break;
 					case knight:
-						GetLegalKnightMoves(moveList, current, i, j);
+						GetPseudoLegalKnightMoves(moveList, current, i, j);
 						break;
 					case bishop:
-						GetLegalBishopMoves(moveList, current, i, j);
+						GetPseudoLegalBishopMoves(moveList, current, i, j);
 						break;
 					case rook:
-						GetLegalRookMoves(moveList, current, i, j);
+						GetPseudoLegalRookMoves(moveList, current, i, j);
 						break;
 					case queen:
-						GetLegalQueenMoves(moveList, current, i, j);
+						GetPseudoLegalQueenMoves(moveList, current, i, j);
 						break;
 					case king:
-						GetLegalKingMoves(moveList, current, i, j);
+						GetPseudoLegalKingMoves(moveList, current, i, j);
 						break;
 				}
 			}
@@ -63,7 +63,7 @@ std::list<Move> Engine::GetLegalMoves() {
 	return moveList;
 }
 
-void Engine::GetLegalPawnMoves(std::list<Move>& moveList, Piece current, int i, int j) {
+void Engine::GetPseudoLegalPawnMoves(std::list<Move>& moveList, Piece current, int i, int j) {
 	Move move;
 	int sign = current.color ? -1 : 1;
 	if (j + sign < 7 && j + sign > 0) {
@@ -117,7 +117,7 @@ void Engine::GetLegalPawnMoves(std::list<Move>& moveList, Piece current, int i, 
 	}
 }
 
-void Engine::GetLegalKnightMoves(std::list<Move>& moveList, Piece current, int i, int j){
+void Engine::GetPseudoLegalKnightMoves(std::list<Move>& moveList, Piece current, int i, int j){
 	Move move;
 	for (int dj = -2;dj < 3;dj += 4) {
 		for (int di = -1;di < 2;di += 2) {
@@ -145,7 +145,7 @@ void Engine::GetLegalKnightMoves(std::list<Move>& moveList, Piece current, int i
 	}
 }
 
-void Engine::GetLegalBishopMoves(std::list<Move>& moveList, Piece current, int i, int j){
+void Engine::GetPseudoLegalBishopMoves(std::list<Move>& moveList, Piece current, int i, int j){
 	Move move;
 	for (int n = 1;n < std::min(8-i,8-j);n++) {
 		Piece other = board.GetPieceAt(i + n, j + n);
@@ -197,7 +197,7 @@ void Engine::GetLegalBishopMoves(std::list<Move>& moveList, Piece current, int i
 	}
 }
 
-void Engine::GetLegalRookMoves(std::list<Move>& moveList, Piece current, int i, int j){
+void Engine::GetPseudoLegalRookMoves(std::list<Move>& moveList, Piece current, int i, int j){
 	Move move;
 	for (int n = i+1;n < 8;n++) {
 		Piece other = board.GetPieceAt(n, j);
@@ -249,12 +249,12 @@ void Engine::GetLegalRookMoves(std::list<Move>& moveList, Piece current, int i, 
 	}
 }
 
-void Engine::GetLegalQueenMoves(std::list<Move>& moveList, Piece current, int i, int j){
-	GetLegalRookMoves(moveList, current, i, j);
-	GetLegalBishopMoves(moveList, current, i, j);
+void Engine::GetPseudoLegalQueenMoves(std::list<Move>& moveList, Piece current, int i, int j){
+	GetPseudoLegalRookMoves(moveList, current, i, j);
+	GetPseudoLegalBishopMoves(moveList, current, i, j);
 }
 
-void Engine::GetLegalKingMoves(std::list<Move>& moveList, Piece current, int i, int j){
+void Engine::GetPseudoLegalKingMoves(std::list<Move>& moveList, Piece current, int i, int j){
 	Move move;
 	for (int di = -1;di < 2;di+=1) {
 		for (int dj = -1;dj < 2;dj+=1) {
@@ -331,5 +331,72 @@ void Engine::GetLegalKingMoves(std::list<Move>& moveList, Piece current, int i, 
 }
 
 std::string Engine::GetBestMove() {
-	return Move2Str(GetLegalMoves().front());
+	return Move2Str(GetPseudoLegalMoves().front());
+}
+
+std::list<Move> Engine::GetLegalMoves() {
+	std::list<Move> pseudoMoves = GetPseudoLegalMoves();
+	std::list<std::list<Coord>> checkLines = board.GetCheckLines();
+	std::list<Move> legalMoves;
+	if (board.GetCheck()) {
+		for (int i = 0;i < pseudoMoves.size();i++) {
+			Move current = pseudoMoves.back();	pseudoMoves.pop_back();
+			Coord target = current.targetCoord;
+			bool contains = current.convertTo == king;
+
+			for (int j = 0;j < checkLines.size();j++) {
+				std::list<Coord> checkLine = checkLines.back(); checkLines.pop_back();
+
+				for (int k = 0;k < checkLine.size();k++) {
+					Coord checkCoord = checkLine.back();	checkLine.pop_back();
+					if (checkCoord == target && current.convertTo != king) {
+						contains = true;
+					}
+					else if (checkCoord == target && current.convertTo == king) {
+						contains = false;
+					}
+					checkLine.push_front(checkCoord);
+				}
+
+				checkLines.push_front(checkLine);
+			}
+			if (contains) {
+				legalMoves.push_front(current);
+			}
+			pseudoMoves.push_front(current);
+		}
+	}
+	while (pseudoMoves.size() > 0) {
+		Move current = pseudoMoves.back();	pseudoMoves.pop_back();
+		Coord start = current.startCoord;
+		Coord target = current.targetCoord;
+		bool containsStart = current.convertTo == king;	//this is because for the kin everything is reversed
+		bool containsTarget = current.convertTo == king;
+
+		for (int j = 0;j < checkLines.size();j++) {
+			std::list<Coord> checkLine = checkLines.back(); checkLines.pop_back();
+
+			for (int k = 0;k < checkLine.size();k++) {
+				Coord checkCoord = checkLine.back();	checkLine.pop_back();
+				if (checkCoord == target && current.convertTo != king) {
+					containsTarget = true;
+				}
+				if (checkCoord == start && current.convertTo != king) {
+					containsStart = true;
+				}
+				checkLine.push_front(checkCoord);
+			}
+
+			checkLines.push_front(checkLine);
+		}
+		if (containsStart) {
+			if (containsTarget) {
+				legalMoves.push_front(current);
+			}
+		}
+		else {
+			legalMoves.push_front(current);
+		}
+	}
+	return legalMoves;
 }
