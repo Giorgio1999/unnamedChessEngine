@@ -42,7 +42,7 @@ std::string Move2Str(Move move) {
 	std::string tmp = "";
 	tmp += Coord2Str(move.startCoord);
 	tmp += Coord2Str(move.targetCoord);
-	if (move.convertTo != none) {
+	if (move.promotion) {
 		tmp += PieceType2Str(move.convertTo);
 	}
 	return tmp;

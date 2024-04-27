@@ -23,7 +23,8 @@ struct Move
 {
 	Coord startCoord;		//from
 	Coord targetCoord;		//to
-	PieceType convertTo = none;
+	PieceType convertTo = none;	//used to indicate promotions, as well as using wheter the move is a king move or not for checks
+	bool promotion = false;	//distinguish promotions from none promotions
 
 	Move();
 	Move(int i1, int j1, int i2, int j2);

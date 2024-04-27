@@ -64,13 +64,18 @@ std::list<Move> Engine::GetLegalMoves() {
 }
 
 void Engine::GetLegalPawnMoves(std::list<Move>& moveList, Piece current, int i, int j) {
+	Move move;
 	int sign = current.color ? -1 : 1;
 	if (j + sign < 7 && j + sign > 0) {
 		if(board.GetPieceAt(i,j+sign).pieceType==none){
-			moveList.push_back(Move(i, j, i, j + sign));
+			move = Move(i, j, i, j + sign);
+			move.convertTo = pawn;
+			moveList.push_back(move);
 			if (j + 2 * sign < 8 && j + 2 * sign >= 0) {
 				if (board.GetPieceAt(i, j + 2*sign).pieceType == none && !current.hasMoved) {
-					moveList.push_back(Move(i, j, i, j + 2*sign));
+					move = Move(i, j, i, j + 2 * sign);
+					move.convertTo = pawn;
+					moveList.push_back(move);
 				}
 			}
 		}
@@ -78,37 +83,42 @@ void Engine::GetLegalPawnMoves(std::list<Move>& moveList, Piece current, int i, 
 	for (int di = -1;di < 2;di += 2) {
 		if (i + di < 8 && i + di >=0 && j + sign < 7 && j + sign > 0) {
 			if ((board.GetPieceAt(i + di, j + sign).pieceType != none || board.GetPieceAt(i + di, j + sign).isGhost) && board.GetPieceAt(i + di, j + sign).color != current.color) {
-				moveList.push_back(Move(i, j, i + di, j + sign));
+				move = Move(i, j, i + di, j + sign);
+				move.convertTo = pawn;
+				moveList.push_back(move);
 			}
 		}
 		if (i + di < 8 && i + di >= 0 && (j + sign == 7 || j + sign == 0)) {
 			if ((board.GetPieceAt(i + di, j + sign).pieceType != none || board.GetPieceAt(i + di, j + sign).isGhost) && board.GetPieceAt(i + di, j + sign).color != current.color) {
-				Move promotion = Move(i, j, i + di, j + sign);
-				promotion.convertTo = knight;
-				moveList.push_back(promotion);
-				promotion.convertTo = bishop;
-				moveList.push_back(promotion);
-				promotion.convertTo = rook;
-				moveList.push_back(promotion);
-				promotion.convertTo = queen;
-				moveList.push_back(promotion);
+				move = Move(i, j, i + di, j + sign);
+				move.promotion = true;
+				move.convertTo = knight;
+				moveList.push_back(move);
+				move.convertTo = bishop;
+				moveList.push_back(move);
+				move.convertTo = rook;
+				moveList.push_back(move);
+				move.convertTo = queen;
+				moveList.push_back(move);
 			}
 		}
 	}
 	if ((j + sign == 7 || j + sign == 0) && board.GetPieceAt(i,j+sign).pieceType==none) {
-		Move promotion = Move(i, j, i, j + sign);
-		promotion.convertTo = knight;
-		moveList.push_back(promotion);
-		promotion.convertTo = bishop;
-		moveList.push_back(promotion);
-		promotion.convertTo = rook;
-		moveList.push_back(promotion);
-		promotion.convertTo = queen;
-		moveList.push_back(promotion);
+		move = Move(i, j, i, j + sign);
+		move.promotion = true;
+		move.convertTo = knight;
+		moveList.push_back(move);
+		move.convertTo = bishop;
+		moveList.push_back(move);
+		move.convertTo = rook;
+		moveList.push_back(move);
+		move.convertTo = queen;
+		moveList.push_back(move);
 	}
 }
 
 void Engine::GetLegalKnightMoves(std::list<Move>& moveList, Piece current, int i, int j){
+	Move move;
 	for (int dj = -2;dj < 3;dj += 4) {
 		for (int di = -1;di < 2;di += 2) {
 			int I = i + di;
@@ -116,7 +126,9 @@ void Engine::GetLegalKnightMoves(std::list<Move>& moveList, Piece current, int i
 			if (I < 8 && I >= 0 && J < 8 && J >= 0) {
 				Piece other = board.GetPieceAt(I, J);
 				if (other.color != current.color || other.pieceType==none) {
-					moveList.push_back(Move(i, j, I, J));
+					move = Move(i, j, I, J);
+					move.convertTo = knight;
+					moveList.push_back(move);
 				}
 			}
 			I = j + di;
@@ -124,7 +136,9 @@ void Engine::GetLegalKnightMoves(std::list<Move>& moveList, Piece current, int i
 			if (I < 8 && I >= 0 && J < 8 && J >= 0) {
 				Piece other = board.GetPieceAt(J, I);
 				if (other.color != current.color || other.pieceType==none) {
-					moveList.push_back(Move(i, j, J, I));
+					move = Move(i, j, J, I);
+					move.convertTo = knight;
+					moveList.push_back(move);
 				}
 			}
 		}
@@ -132,12 +146,15 @@ void Engine::GetLegalKnightMoves(std::list<Move>& moveList, Piece current, int i
 }
 
 void Engine::GetLegalBishopMoves(std::list<Move>& moveList, Piece current, int i, int j){
+	Move move;
 	for (int n = 1;n < std::min(8-i,8-j);n++) {
 		Piece other = board.GetPieceAt(i + n, j + n);
 		if (other.color == current.color && other.pieceType != none) {
 			break;
 		}
-		moveList.push_back(Move(i, j, i + n, j + n));
+		move = Move(i, j, i + n, j + n);
+		move.convertTo = current.pieceType;
+		moveList.push_back(move);
 		if (other.color != current.color && other.pieceType != none) {
 			break;
 		}
@@ -147,7 +164,9 @@ void Engine::GetLegalBishopMoves(std::list<Move>& moveList, Piece current, int i
 		if (other.color == current.color && other.pieceType != none) {
 			break;
 		}
-		moveList.push_back(Move(i, j, i - n, j - n));
+		move = Move(i, j, i - n, j - n);
+		move.convertTo = current.pieceType;
+		moveList.push_back(move);
 		if (other.color != current.color && other.pieceType != none) {
 			break;
 		}
@@ -157,7 +176,9 @@ void Engine::GetLegalBishopMoves(std::list<Move>& moveList, Piece current, int i
 		if (other.color == current.color && other.pieceType != none) {
 			break;
 		}
-		moveList.push_back(Move(i, j, i + n, j - n));
+		move = Move(i, j, i + n, j - n);
+		move.convertTo = current.pieceType;
+		moveList.push_back(move);
 		if (other.color != current.color && other.pieceType != none) {
 			break;
 		}
@@ -167,7 +188,9 @@ void Engine::GetLegalBishopMoves(std::list<Move>& moveList, Piece current, int i
 		if (other.color == current.color && other.pieceType != none) {
 			break;
 		}
-		moveList.push_back(Move(i, j, i - n, j + n));
+		move = Move(i, j, i - n, j + n);
+		move.convertTo = current.pieceType;
+		moveList.push_back(move);
 		if (other.color != current.color && other.pieceType != none) {
 			break;
 		}
@@ -175,12 +198,15 @@ void Engine::GetLegalBishopMoves(std::list<Move>& moveList, Piece current, int i
 }
 
 void Engine::GetLegalRookMoves(std::list<Move>& moveList, Piece current, int i, int j){
+	Move move;
 	for (int n = i+1;n < 8;n++) {
 		Piece other = board.GetPieceAt(n, j);
 		if (other.color == current.color && other.pieceType != none) {
 			break;
 		}
-		moveList.push_back(Move(i, j, n, j));
+		move = Move(i, j, n, j);
+		move.convertTo = current.pieceType;
+		moveList.push_back(move);
 		if (other.color != current.color && other.pieceType != none) {
 			break;
 		}
@@ -190,7 +216,9 @@ void Engine::GetLegalRookMoves(std::list<Move>& moveList, Piece current, int i, 
 		if (other.color == current.color && other.pieceType != none) {
 			break;
 		}
-		moveList.push_back(Move(i, j, n, j));
+		move = Move(i, j, n, j);
+		move.convertTo = current.pieceType;
+		moveList.push_back(move);
 		if (other.color != current.color && other.pieceType != none) {
 			break;
 		}
@@ -200,7 +228,9 @@ void Engine::GetLegalRookMoves(std::list<Move>& moveList, Piece current, int i, 
 		if (other.color == current.color && other.pieceType != none) {
 			break;
 		}
-		moveList.push_back(Move(i, j, i, n));
+		move = Move(i, j, i, n);
+		move.convertTo = current.pieceType;
+		moveList.push_back(move);
 		if (other.color != current.color && other.pieceType != none) {
 			break;
 		}
@@ -210,7 +240,9 @@ void Engine::GetLegalRookMoves(std::list<Move>& moveList, Piece current, int i, 
 		if (other.color == current.color && other.pieceType != none) {
 			break;
 		}
-		moveList.push_back(Move(i, j, i, n));
+		move = Move(i, j, i, n);
+		move.convertTo = current.pieceType;
+		moveList.push_back(move);
 		if (other.color != current.color && other.pieceType != none) {
 			break;
 		}
@@ -223,6 +255,7 @@ void Engine::GetLegalQueenMoves(std::list<Move>& moveList, Piece current, int i,
 }
 
 void Engine::GetLegalKingMoves(std::list<Move>& moveList, Piece current, int i, int j){
+	Move move;
 	for (int di = -1;di < 2;di+=1) {
 		for (int dj = -1;dj < 2;dj+=1) {
 			if (!(di == 0 && dj == 0)) {
@@ -231,7 +264,9 @@ void Engine::GetLegalKingMoves(std::list<Move>& moveList, Piece current, int i, 
 				if ((I < 8 && I >= 0 && J < 8 && J >= 0)) {
 					Piece other = board.GetPieceAt(I, J);
 					if (other.color != current.color || other.pieceType == none) {
-						moveList.push_back(Move(i, j, I, J));
+						move = Move(i, j, I, J);
+						move.convertTo = king;
+						moveList.push_back(move);
 					}
 				}
 			}
@@ -249,7 +284,9 @@ void Engine::GetLegalKingMoves(std::list<Move>& moveList, Piece current, int i, 
 				}
 			}
 			if (!noCastle) {
-				moveList.push_back(Move(i, j, i + 2, j));
+				move = Move(i, j, i + 2, j);
+				move.convertTo = king;
+				moveList.push_back(move);
 			}
 			break;
 		case 2:
@@ -260,7 +297,9 @@ void Engine::GetLegalKingMoves(std::list<Move>& moveList, Piece current, int i, 
 				}
 			}
 			if (!noCastle) {
-				moveList.push_back(Move(i, j, i - 2, j));
+				move = Move(i, j, i - 2, j);
+				move.convertTo = king;
+				moveList.push_back(move);
 			}
 			break;
 		case 3:
@@ -271,7 +310,9 @@ void Engine::GetLegalKingMoves(std::list<Move>& moveList, Piece current, int i, 
 				}
 			}
 			if (!noCastle) {
-				moveList.push_back(Move(i, j, i - 2, j));
+				move = Move(i, j, i - 2, j);
+				move.convertTo = king;
+				moveList.push_back(move);
 			}
 			noCastle = false;
 			for (int I = i + 1;I < 6;I++) {
@@ -281,7 +322,9 @@ void Engine::GetLegalKingMoves(std::list<Move>& moveList, Piece current, int i, 
 				}
 			}
 			if (!noCastle) {
-				moveList.push_back(Move(i, j, i + 2, j));
+				move = Move(i, j, i + 2, j);
+				move.convertTo = king;
+				moveList.push_back(move);
 			}
 			break;
 	}

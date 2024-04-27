@@ -103,7 +103,7 @@ void Board::MakeMove(Move move) {
 		SetPieceAt(Coord(move.targetCoord.x, move.targetCoord.y + sign), ghost);
 		board.isEnpassantable = true;
 	}
-	if (move.convertTo != none) {	//Pawn promotion
+	if (move.convertTo != none) {	//if moves read from console they have converto none, else just leave the piece unchanged
 		piece.pieceType = move.convertTo;
 	}
 	if (move == Str2Move("e1g1") && board.whiteKingsideCastleRight && board.whiteToMove) {	//Castling
