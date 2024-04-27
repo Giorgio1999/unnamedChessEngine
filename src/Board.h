@@ -25,8 +25,12 @@ public:
 	void RemoveAllCastleRights(bool color);				//Sets all castle rights to false of given color
 	bool WhiteToMove();									//Return white to move
 	int GetCastleRights(bool color);					//Returns an integer which encodes the castle rights for the given color: 0=none, 1=queen, 2=king, 3=both
+	void UpdateCheckLines();							//Updates the list of lines along which the enemy sees the king
+	std::list<Coord> GetLineOfCoords(Coord start, Coord target);	//Return an uninterrupted line of Coords from start (inclusive) to target (exclusive). If there is a blocker an empty line is return. Only possible lines are like a rook, like a bishop
+														
 
 private:
 	PieceList board;
 	std::list<PieceList> gameHistory;
+	std::list<std::list<Coord>> checkLines;
 };

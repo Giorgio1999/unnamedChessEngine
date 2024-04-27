@@ -81,7 +81,8 @@ std::string Board::ShowBoard() {
 		}
 		boardString += "\n";
 	}
-	boardString += "\n";
+	boardString += "\n" + std::to_string(checkLines.size()) + "\n";
+
 	return boardString;
 }
 
@@ -167,6 +168,7 @@ void Board::MakeMove(Move move) {
 	}
 	board.whiteToMove = !board.whiteToMove;
 	piece.hasMoved = true;
+	UpdateCheckLines();
 }
 
 void Board::UndoLastMove() {
@@ -223,4 +225,86 @@ int Board::GetCastleRights(bool color) {
 		}
 	}
 	return res;
+}
+
+void Board::UpdateCheckLines() {
+	std::list<std::list<Coord>> checkLines;
+	Coord kingCoord;
+	Piece current;
+	for (int i = 0;i < 8;i++) {
+		for (int j = 0;j < 8;j++) {
+			current = GetPieceAt(i,j);
+			if (current.pieceType == king && current.color == board.whiteToMove) {
+				kingCoord = Coord(i, j);
+			}
+		}
+	}
+	for (int i = 0;i < 8;i++) {
+		for (int j = 0;j < 8;j++) {
+			Piece current = GetPieceAt(i, j);
+			if (current.color != board.whiteToMove) {
+				switch (current.pieceType) {
+					case rook:
+						checkLines.push_back(GetLineOfCoords(Coord(i, j), kingCoord));
+						break;
+					case bishop:
+						checkLines.push_back(GetLineOfCoords(Coord(i, j), kingCoord));
+						break;
+					case queen:
+						checkLines.push_back(GetLineOfCoords(Coord(i, j), kingCoord));
+						break;
+					case knight:
+						break;
+					case pawn:
+						break;
+				}
+			}
+		}
+	}
+}
+
+std::list<Coord> Board::GetLineOfCoords(Coord start, Coord target) {
+	std::list<Coord> coordLine;
+	bool appendable = true;
+	if (start.x - target.x == 0) {
+		int sign = start.y > target.y ? 1 : -1;
+		coordLine.push_back(start);
+		for (int i = start.y+1;i < target.y;i += sign) {
+			if (GetPieceAt(start.x, i).pieceType != none) {
+				appendable = false;
+				break;
+			}
+			coordLine.push_back(Coord(start.x, i));
+		}
+	}
+	else if(start.y-target.y == 0){
+		int sign = start.x > target.x ? 1 : -1;
+		coordLine.push_back(start);
+		for (int i = start.x+1;i < target.x;i += sign) {
+			if (GetPieceAt(i, start.y).pieceType != none) {
+				appendable = false;
+				break;
+			}
+			coordLine.push_back(Coord(i, start.y));
+		}
+	}
+	else if (std::abs(start.x - target.x) == std::abs(start.y - target.y)) {
+		int signX = start.x > target.x ? 1 : -1;
+		int signY = start.y > target.y ? 1 : -1;
+		coordLine.push_back(start);
+		for (int n = 1;n < std::abs(start.x - target.x);n++) {
+			int I = start.x + signX * n;
+			int J = start.y + signY * n;
+			if (GetPieceAt(I, J).pieceType != none) {
+				appendable = false;
+				break;
+			}
+			coordLine.push_back(Coord(I, J));
+		}
+	}
+	if (appendable) {
+		return coordLine;
+	}
+	std::list<Coord> null;
+	return null;
 }
