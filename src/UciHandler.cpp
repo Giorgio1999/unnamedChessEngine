@@ -9,7 +9,7 @@ void Listen() {
 	while (std::getline(std::cin, instruction)) {
 		std::string key = instruction.substr(0, instruction.find(' '));
 		if (key == "uci") {
-			std::cout << "id name unnamedChessEngine\n";
+			std::cout << "id name Bastet\n";
 			std::cout << "id author G. Lovato\n";
 			std::cout << "uciok\n";
 			engineController.BootEngine();

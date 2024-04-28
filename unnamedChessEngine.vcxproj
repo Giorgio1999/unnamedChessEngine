@@ -24,6 +24,7 @@
     <ProjectGuid>{2638f8c6-188f-45ae-b90b-cf392d8f84fa}</ProjectGuid>
     <RootNamespace>unnamedChessEngine</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>Bastet</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

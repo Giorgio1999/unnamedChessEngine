@@ -180,7 +180,7 @@ void Board::MakeMove(Move move) {
 	}
 	board.whiteToMove = !board.whiteToMove;
 	piece.hasMoved = true;
-	UpdateCheckLines();
+	UpdateCheckLines(board.whiteToMove);
 }
 
 void Board::UndoLastMove() {
@@ -239,14 +239,14 @@ int Board::GetCastleRights(bool color) {
 	return res;
 }
 
-void Board::UpdateCheckLines() {
+void Board::UpdateCheckLines(bool kingColor) {
 	std::list<std::list<Coord>> newCheckLines;
 	Coord kingCoord;
 	Piece current;
 	for (int i = 0;i < 8;i++) {
 		for (int j = 0;j < 8;j++) {
 			current = GetPieceAt(i,j);
-			if (current.pieceType == king && current.color == board.whiteToMove) {
+			if (current.pieceType == king && current.color == kingColor) {
 				kingCoord = Coord(i, j);
 			}
 		}
@@ -254,7 +254,7 @@ void Board::UpdateCheckLines() {
 	for (int i = 0;i < 8;i++) {
 		for (int j = 0;j < 8;j++) {
 			Piece current = GetPieceAt(i, j);
-			if (current.color != board.whiteToMove) {
+			if (current.color != kingColor) {
 				switch (current.pieceType) {
 					case rook:
 						newCheckLines.push_back(GetLineOfCoords(Coord(i, j), kingCoord));

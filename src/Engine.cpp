@@ -372,30 +372,43 @@ std::list<Move> Engine::GetLegalMoves() {
 		Coord target = current.targetCoord;
 		bool containsStart = current.convertTo == king;	//this is because for the kin everything is reversed
 		bool containsTarget = current.convertTo == king;
+		if (current.convertTo != king) {
+			for (int j = 0;j < checkLines.size();j++) {
+				std::list<Coord> checkLine = checkLines.back(); checkLines.pop_back();
 
-		for (int j = 0;j < checkLines.size();j++) {
-			std::list<Coord> checkLine = checkLines.back(); checkLines.pop_back();
+				for (int k = 0;k < checkLine.size();k++) {
+					Coord checkCoord = checkLine.back();	checkLine.pop_back();
+					if (checkCoord == target) {
+						containsTarget = true;
+					}
+					if (checkCoord == start) {
+						containsStart = true;
+					}
+					checkLine.push_front(checkCoord);
+				}
 
-			for (int k = 0;k < checkLine.size();k++) {
-				Coord checkCoord = checkLine.back();	checkLine.pop_back();
-				if (checkCoord == target && current.convertTo != king) {
-					containsTarget = true;
-				}
-				if (checkCoord == start && current.convertTo != king) {
-					containsStart = true;
-				}
-				checkLine.push_front(checkCoord);
+				checkLines.push_front(checkLine);
 			}
-
-			checkLines.push_front(checkLine);
-		}
-		if (containsStart) {
-			if (containsTarget) {
+			if (containsStart) {
+				if (containsTarget) {
+					legalMoves.push_front(current);
+				}
+			}
+			else {
 				legalMoves.push_front(current);
 			}
 		}
+		//Seperate Treatment of King (of course). The king is not allowed to step into check. Therefore if its not currently check, we have to make
+		//every king move on the board and check wheter it is now check
 		else {
-			legalMoves.push_front(current);
+			bool kingColor = board.WhiteToMove();
+			board.MakeMove(current);	//There might be a chance to implement a quicker version of make move only for king moves
+			board.UpdateCheckLines(kingColor);	//Update Check lines but with respect to the old king
+			bool isCheckAfterMove = board.GetCheck();	//Test wheter the player who made the king move is now in check
+			board.UndoLastMove();	//Revert board back to original state
+			if (!isCheckAfterMove) {
+				legalMoves.push_back(current);
+			}
 		}
 	}
 	return legalMoves;
