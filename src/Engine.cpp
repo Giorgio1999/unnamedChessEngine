@@ -223,7 +223,7 @@ void Engine::GetPseudoLegalRookMoves(std::list<Move>& moveList, Piece current, i
 			break;
 		}
 	}
-	for (int n = j+1;n < i;n++) {
+	for (int n = j+1;n < 8;n++) {
 		Piece other = board.GetPieceAt(i, n);
 		if (other.color == current.color && other.pieceType != none) {
 			break;
@@ -272,144 +272,151 @@ void Engine::GetPseudoLegalKingMoves(std::list<Move>& moveList, Piece current, i
 			}
 		}
 	}
-	int rights = board.GetCastleRights(current.color);
-	bool noCastle = false;
-	switch (rights)
-	{
-		case 1:
-			for (int I = i + 1;I < 7;I++) {
-				if (board.GetPieceAt(I, j).pieceType != none) {
-					noCastle = true;
-					break;
+	if (!current.hasMoved) {
+		int rights = board.GetCastleRights(current.color);
+		bool noCastle = false;
+		switch (rights)
+		{
+			case 1:
+				for (int I = i + 1;I < 7;I++) {
+					if (board.GetPieceAt(I, j).pieceType != none) {
+						noCastle = true;
+						break;
+					}
 				}
-			}
-			if (!noCastle) {
-				move = Move(i, j, i + 2, j);
-				move.convertTo = king;
-				moveList.push_back(move);
-			}
-			break;
-		case 2:
-			for (int I = i - 1;I > 0;I--) {
-				if (board.GetPieceAt(I, j).pieceType != none) {
-					noCastle = true;
-					break;
+				if (!noCastle) {
+					move = Move(i, j, i + 2, j);
+					move.convertTo = king;
+					moveList.push_back(move);
 				}
-			}
-			if (!noCastle) {
-				move = Move(i, j, i - 2, j);
-				move.convertTo = king;
-				moveList.push_back(move);
-			}
-			break;
-		case 3:
-			for (int I = i - 1;I > 0;I--) {
-				if (board.GetPieceAt(I, j).pieceType != none) {
-					noCastle = true;
-					break;
+				break;
+			case 2:
+				for (int I = i - 1;I > 0;I--) {
+					if (board.GetPieceAt(I, j).pieceType != none) {
+						noCastle = true;
+						break;
+					}
 				}
-			}
-			if (!noCastle) {
-				move = Move(i, j, i - 2, j);
-				move.convertTo = king;
-				moveList.push_back(move);
-			}
-			noCastle = false;
-			for (int I = i + 1;I < 6;I++) {
-				if (board.GetPieceAt(I, j).pieceType != none) {
-					noCastle = true;
-					break;
+				if (!noCastle) {
+					move = Move(i, j, i - 2, j);
+					move.convertTo = king;
+					moveList.push_back(move);
 				}
-			}
-			if (!noCastle) {
-				move = Move(i, j, i + 2, j);
-				move.convertTo = king;
-				moveList.push_back(move);
-			}
-			break;
+				break;
+			case 3:
+				for (int I = i - 1;I > 0;I--) {
+					if (board.GetPieceAt(I, j).pieceType != none) {
+						noCastle = true;
+						break;
+					}
+				}
+				if (!noCastle) {
+					move = Move(i, j, i - 2, j);
+					move.convertTo = king;
+					moveList.push_back(move);
+				}
+				noCastle = false;
+				for (int I = i + 1;I < 6;I++) {
+					if (board.GetPieceAt(I, j).pieceType != none) {
+						noCastle = true;
+						break;
+					}
+				}
+				if (!noCastle) {
+					move = Move(i, j, i + 2, j);
+					move.convertTo = king;
+					moveList.push_back(move);
+				}
+				break;
+		}
 	}
 }
 
 std::string Engine::GetBestMove() {
-	return Move2Str(GetPseudoLegalMoves().front());
+	std::list<Move> legalmoves = GetLegalMoves();
+	return Move2Str(legalmoves.front());
 }
 
 std::list<Move> Engine::GetLegalMoves() {
 	std::list<Move> pseudoMoves = GetPseudoLegalMoves();
 	std::list<std::list<Coord>> checkLines = board.GetCheckLines();
 	std::list<Move> legalMoves;
-	if (board.GetCheck()) {
-		for (int i = 0;i < pseudoMoves.size();i++) {
-			Move current = pseudoMoves.back();	pseudoMoves.pop_back();
-			Coord target = current.targetCoord;
-			bool contains = current.convertTo == king;
-
-			for (int j = 0;j < checkLines.size();j++) {
-				std::list<Coord> checkLine = checkLines.back(); checkLines.pop_back();
-
-				for (int k = 0;k < checkLine.size();k++) {
-					Coord checkCoord = checkLine.back();	checkLine.pop_back();
-					if (checkCoord == target && current.convertTo != king) {
-						contains = true;
-					}
-					else if (checkCoord == target && current.convertTo == king) {
-						contains = false;
-					}
-					checkLine.push_front(checkCoord);
-				}
-
-				checkLines.push_front(checkLine);
-			}
-			if (contains) {
-				legalMoves.push_front(current);
-			}
-			pseudoMoves.push_front(current);
-		}
-	}
+	
 	while (pseudoMoves.size() > 0) {
-		Move current = pseudoMoves.back();	pseudoMoves.pop_back();
-		Coord start = current.startCoord;
-		Coord target = current.targetCoord;
-		bool containsStart = current.convertTo == king;	//this is because for the kin everything is reversed
-		bool containsTarget = current.convertTo == king;
-		if (current.convertTo != king) {
-			for (int j = 0;j < checkLines.size();j++) {
-				std::list<Coord> checkLine = checkLines.back(); checkLines.pop_back();
-
-				for (int k = 0;k < checkLine.size();k++) {
-					Coord checkCoord = checkLine.back();	checkLine.pop_back();
-					if (checkCoord == target) {
-						containsTarget = true;
-					}
-					if (checkCoord == start) {
-						containsStart = true;
-					}
-					checkLine.push_front(checkCoord);
-				}
-
-				checkLines.push_front(checkLine);
-			}
-			if (containsStart) {
-				if (containsTarget) {
-					legalMoves.push_front(current);
-				}
-			}
-			else {
-				legalMoves.push_front(current);
-			}
+		Move current = pseudoMoves.front();	pseudoMoves.pop_front();
+		bool color = board.WhiteToMove();
+		bool tmpCheck;
+		if (current == Str2Move("e1g1")) {
+			board.MakeMove(Str2Move("e1f1"));
+			board.UpdateCheckLines(color);
+			tmpCheck = board.GetCheck();
+			board.UndoLastMove();
+			board.MakeMove(Str2Move("e1g1"));
+			tmpCheck |= board.GetCheck();
 		}
-		//Seperate Treatment of King (of course). The king is not allowed to step into check. Therefore if its not currently check, we have to make
-		//every king move on the board and check wheter it is now check
+		else if (current == Str2Move("e1c1")) {
+			board.MakeMove(Str2Move("e1d1"));
+			board.UpdateCheckLines(color);
+			tmpCheck = board.GetCheck();
+			board.UndoLastMove();
+			board.MakeMove(Str2Move("e1c1"));
+			board.UpdateCheckLines(color);
+			tmpCheck |= board.GetCheck();
+		}
+		else if (current == Str2Move("e7g7")) {
+			board.MakeMove(Str2Move("e7f7"));
+			board.UpdateCheckLines(color);
+			tmpCheck = board.GetCheck();
+			board.UndoLastMove();
+			board.MakeMove(Str2Move("e7g7"));
+			tmpCheck |= board.GetCheck();
+		}
+		else if (current == Str2Move("e7c7")) {
+			board.MakeMove(Str2Move("e7d7"));
+			board.UpdateCheckLines(color);
+			tmpCheck = board.GetCheck();
+			board.UndoLastMove();
+			board.MakeMove(Str2Move("e7c7"));
+			board.UpdateCheckLines(color);
+			tmpCheck |= board.GetCheck();
+		}
 		else {
-			bool kingColor = board.WhiteToMove();
-			board.MakeMove(current);	//There might be a chance to implement a quicker version of make move only for king moves
-			board.UpdateCheckLines(kingColor);	//Update Check lines but with respect to the old king
-			bool isCheckAfterMove = board.GetCheck();	//Test wheter the player who made the king move is now in check
-			board.UndoLastMove();	//Revert board back to original state
-			if (!isCheckAfterMove) {
-				legalMoves.push_back(current);
-			}
+			board.MakeMove(current);
+			board.UpdateCheckLines(color);
+			tmpCheck = board.GetCheck();
 		}
+		if (!tmpCheck) {
+			legalMoves.push_back(current);
+		}
+		board.UndoLastMove();
 	}
+
 	return legalMoves;
+}
+
+int Engine::Perft(int depth) {
+	std::list<Move> legalMoves = GetLegalMoves();
+	if (depth == 0) {
+		return (int)legalMoves.size();
+	}
+	int numberOfLeafs = 0;
+	while (legalMoves.size() > 0) {
+		Move current = legalMoves.back();	legalMoves.pop_back();
+		board.MakeMove(current);
+		numberOfLeafs += Perft(depth-1);
+		board.UndoLastMove();
+	}
+	return numberOfLeafs;
+}
+
+std::string Engine::SplitPerft(int depth) {
+	std::list<Move> legalMoves = GetLegalMoves();
+	std::string returnString = "";
+	while (legalMoves.size() > 0) {
+		Move current = legalMoves.back();	legalMoves.pop_back();
+		board.MakeMove(current);
+		returnString += Move2Str(current) + ": " + std::to_string(Perft(depth - 1)) + "\n";
+		board.UndoLastMove();
+	}
+	return returnString;
 }

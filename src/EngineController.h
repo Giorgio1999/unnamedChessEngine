@@ -16,5 +16,7 @@ class EngineController {
 		std::string GetLegalMoves();				//Gets legalmoves
 		bool IsReady();								//returns ready flag
 		std::string ShowBoard();					//Debug tool to display board in console
-		std::string Search();
+		std::string Search();						//Serch routine
+		std::string Perft(int depth);				//Debug Routine for testing move generation
+		std::string SplitPerft(int depth);			//Split perft prints out number of leaves after each move
 };

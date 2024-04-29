@@ -30,6 +30,9 @@ class Engine {
 		std::list<Move> GetLegalMoves();
 
 		std::string GetBestMove();
+
+		int Perft(int depth);
+		std::string SplitPerft(int depth);
 		//void MakeMove(Move move);
 		//void UndoMove(Move move);
 		//bool InitialiseBoard(bool isStartpos, string fen="noFen");

@@ -77,5 +77,11 @@ void Listen() {
 		if (key == "legalmoves") {
 			std::cout << engineController.GetLegalMoves() << "\n";
 		}
+		if (key == "perft") {
+			std::cout << engineController.Perft(std::stoi(instruction.substr(instruction.find(' ')+1,instruction.length()))) << "\n";
+		}
+		if (key == "splitperft") {
+			std::cout << engineController.SplitPerft(std::stoi(instruction.substr(instruction.find(' ') + 1, instruction.length()))-1) << "\n";
+		}
 	}
 }

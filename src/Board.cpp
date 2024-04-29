@@ -101,7 +101,8 @@ std::string Board::ShowBoard() {
 void Board::MakeMove(Move move) {
 	gameHistory.push_back(board);								//Store position in game history
 	Piece piece = GetPieceAt(move.startCoord);
-	if (GetPieceAt(move.targetCoord).isGhost) {
+	piece.hasMoved = true;
+	if (piece.pieceType == pawn && GetPieceAt(move.targetCoord).isGhost) {
 		int sign = board.whiteToMove ? 1 : -1;
 		Piece ghoster = Piece();
 		SetPieceAt(Coord(move.targetCoord.x, move.targetCoord.y + sign), ghoster);
@@ -179,8 +180,8 @@ void Board::MakeMove(Move move) {
 		}
 	}
 	board.whiteToMove = !board.whiteToMove;
-	piece.hasMoved = true;
-	UpdateCheckLines(board.whiteToMove);
+	//UpdateCheckLines();
+	isCheck = false;
 }
 
 void Board::UndoLastMove() {
@@ -239,6 +240,10 @@ int Board::GetCastleRights(bool color) {
 	return res;
 }
 
+void Board::UpdateCheckLines() {
+	UpdateCheckLines(board.whiteToMove);
+}
+
 void Board::UpdateCheckLines(bool kingColor) {
 	std::list<std::list<Coord>> newCheckLines;
 	Coord kingCoord;
@@ -251,24 +256,33 @@ void Board::UpdateCheckLines(bool kingColor) {
 			}
 		}
 	}
+	UpdateCheckLines(kingColor, kingCoord);
+}
+
+void Board::UpdateCheckLines(bool kingColor, Coord checkCoord) {
+	std::list<std::list<Coord>> newCheckLines;
+	Piece current;
 	for (int i = 0;i < 8;i++) {
 		for (int j = 0;j < 8;j++) {
 			Piece current = GetPieceAt(i, j);
 			if (current.color != kingColor) {
 				switch (current.pieceType) {
-					case rook:
-						newCheckLines.push_back(GetLineOfCoords(Coord(i, j), kingCoord));
-						break;
-					case bishop:
-						newCheckLines.push_back(GetLineOfCoords(Coord(i, j), kingCoord));
-						break;
-					case queen:
-						newCheckLines.push_back(GetLineOfCoords(Coord(i, j), kingCoord));
-						break;
-					case knight:
-						break;
-					case pawn:
-						break;
+				case rook:
+					newCheckLines.push_back(GetStraightOfCoords(Coord(i, j), checkCoord));
+					break;
+				case bishop:
+					newCheckLines.push_back(GetDiagonalOfCoords(Coord(i, j), checkCoord));
+					break;
+				case queen:
+					newCheckLines.push_back(GetStraightOfCoords(Coord(i, j), checkCoord));
+					newCheckLines.push_back(GetDiagonalOfCoords(Coord(i, j), checkCoord));
+					break;
+				case knight:
+					newCheckLines.push_back(GetKnightChecks(Coord(i, j), checkCoord));
+					break;
+				case pawn:
+					newCheckLines.push_back(GetPawnChecks(Coord(i, j), checkCoord, current.color));
+					break;
 				}
 			}
 		}
@@ -276,53 +290,95 @@ void Board::UpdateCheckLines(bool kingColor) {
 	checkLines = newCheckLines;
 }
 
-std::list<Coord> Board::GetLineOfCoords(Coord start, Coord target) {
+std::list<Coord> Board::GetStraightOfCoords(Coord start, Coord target) {
 	std::list<Coord> coordLine;
-	bool appendable = true;
+	bool tempCheck = true;
 	if (start.x - target.x == 0) {
 		int sign = start.y < target.y ? 1 : -1;
-		int I = start.x + sign;
+		int I = start.y + sign;
 		coordLine.push_back(start);
-		while (I != target.y - sign) {
+		while (I != target.y) {
 			if (GetPieceAt(start.x, I).pieceType != none) {
-				isCheck = true;
+				tempCheck = false;
 			}
 			coordLine.push_back(Coord(start.x, I));
 			I += sign;
+		}
+		if (tempCheck) {
+			isCheck = true;
 		}
 	}
 	else if(start.y-target.y == 0){
 		int sign = start.x < target.x ? 1 : -1;
 		int I = start.x+sign;
 		coordLine.push_back(start);
-		while (I != target.x - sign) {
+		while (I != target.x) {
 			if (GetPieceAt(I, start.y).pieceType != none) {
-				isCheck = true;
+				tempCheck = false;
 			}
 			coordLine.push_back(Coord(I, start.y));
 			I += sign;
 		}
+		if (tempCheck) {
+			isCheck = true;
+		}
 	}
-	else if (std::abs(start.x - target.x) == std::abs(start.y - target.y)) {
+	return coordLine;
+}
+
+std::list<Coord> Board::GetDiagonalOfCoords(Coord start, Coord target) {
+	std::list<Coord> coordLine;
+	bool tempCheck = true;
+	if (std::abs(start.x - target.x) == std::abs(start.y - target.y)) {
 		int signX = start.x < target.x ? 1 : -1;
 		int signY = start.y < target.y ? 1 : -1;
 		int I = start.x + signX;
 		int J = start.y + signY;
 		coordLine.push_back(start);
-		while (I != target.x && J != target.y) {
+		while (I != target.x) {
 			if (GetPieceAt(I, J).pieceType != none) {
-				isCheck = true;
+				tempCheck = false;
 			}
 			coordLine.push_back(Coord(I, J));
 			I += signX;
 			J += signY;
 		}
+		if(tempCheck) {
+			isCheck = true;
+		}
 	}
-	if (appendable) {
-		return coordLine;
+	return coordLine;
+}
+
+std::list<Coord> Board::GetKnightChecks(Coord start, Coord target) {
+	std::list<Coord> knightChecks;
+	if (std::abs(start.x - target.x) == 1 && std::abs(start.y - target.y) == 2) {
+		knightChecks.push_back(start);
+		isCheck = true;
 	}
-	std::list<Coord> null;
-	return null;
+	if (std::abs(start.y - target.y) == 1 && std::abs(start.x - target.x) == 2) {
+		knightChecks.push_back(start);
+		isCheck = true;
+	}
+	return knightChecks;
+
+}
+
+std::list<Coord> Board::GetPawnChecks(Coord start, Coord target, bool colorOfMover) {
+	std::list<Coord> pawnChecks;
+	if (!colorOfMover) {
+		if (start.y-target.y==-1 && std::abs(start.x-target.x)==1) {
+			pawnChecks.push_back(start);
+			isCheck = true;
+		}
+	}
+	else {
+		if (start.y - target.y == 1 && std::abs(start.x - target.x) == 1) {
+			pawnChecks.push_back(start);
+			isCheck = true;
+		}
+	}
+	return pawnChecks;
 }
 
 std::list<std::list<Coord>>& Board::GetCheckLines() {

@@ -25,8 +25,15 @@ public:
 	void RemoveAllCastleRights(bool color);				//Sets all castle rights to false of given color
 	bool WhiteToMove();									//Return white to move
 	int GetCastleRights(bool color);					//Returns an integer which encodes the castle rights for the given color: 0=none, 1=queen, 2=king, 3=both
-	void UpdateCheckLines(bool kingColor);							//Updates the list of lines along which the enemy sees the king of color kingColor
-	std::list<Coord> GetLineOfCoords(Coord start, Coord target);	//Return an uninterrupted line of Coords from start (inclusive) to target (exclusive). If there is a blocker an empty line is return. Only possible lines are like a rook, like a bishop
+	void UpdateCheckLines();							//Updates the list of lines along which the enemy sees the king
+	void UpdateCheckLines(bool kingColor);				//Overload which specifies the color. used in legal move gen
+	void UpdateCheckLines(bool kingColor, Coord checkCoord);		//This overload can be used to check for castling squares. also in legal move gen
+	//These functions directly update check state
+	std::list<Coord> GetStraightOfCoords(Coord start, Coord target);	//Return an uninterrupted line of Coords from start (inclusive) to target (exclusive). If there is a blocker an empty line is return. Only possible lines are like a rook, like a bishop
+	std::list<Coord> GetKnightChecks(Coord start, Coord target);	//Returns start if knight would reach target
+	std::list<Coord> GetDiagonalOfCoords(Coord start, Coord target);	//Returns diagonal. used for bishop and queen
+	std::list<Coord> GetPawnChecks(Coord start, Coord target, bool colorOfMover);		//Returns start if pawn can reach target
+	//^^
 	std::list<std::list<Coord>>& GetCheckLines();
 	bool GetCheck();
 

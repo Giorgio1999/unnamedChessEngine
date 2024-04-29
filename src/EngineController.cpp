@@ -52,3 +52,13 @@ std::string EngineController::GetLegalMoves() {
 std::string EngineController::Search() {
 	return engine.GetBestMove();
 }
+
+std::string EngineController::Perft(int depth) {
+	int numberOfLeafs = engine.Perft(depth);
+	std::string returnString = "" + std::to_string(numberOfLeafs);
+	return returnString;
+}
+
+std::string EngineController::SplitPerft(int depth) {
+	return engine.SplitPerft(depth);
+}
