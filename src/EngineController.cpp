@@ -4,6 +4,7 @@
 #include "Move.h"
 #include <string>
 #include <list>
+#include <chrono>
 
 EngineController::EngineController(){}
 
@@ -24,10 +25,9 @@ void EngineController::SetPosition(std::string fenString) {
 }
 
 void EngineController::MakeMoves(std::string moveHistory) {
-	std::list<Move> moves = Str2Moves(moveHistory);
-	while (moves.size() > 0) {
-		engine.MakeMove(moves.front());
-		moves.pop_front();
+	std::vector<Move> moves = Str2Moves(moveHistory);
+	for (const auto& move : moves){
+		engine.MakeMove(move);
 	}
 }
 
@@ -40,11 +40,11 @@ std::string EngineController::ShowBoard() {
 }
 
 std::string EngineController::GetLegalMoves() {
-	std::list<Move> moveList =  engine.GetLegalMoves();
+	std::vector<Move> moveVector;
+	engine.GetLegalMoves(moveVector);
 	std::string legalMoveList = "";
-	while(moveList.size()>0) {
-		legalMoveList += Move2Str(moveList.back()) + " ";
-		moveList.pop_back();
+	for (const auto& move : moveVector) {
+		legalMoveList += Move2Str(move) + " ";
 	}
 	return legalMoveList;
 }
@@ -54,8 +54,12 @@ std::string EngineController::Search() {
 }
 
 std::string EngineController::Perft(int depth) {
+	auto start = std::chrono::high_resolution_clock::now();
 	int numberOfLeafs = engine.Perft(depth);
-	std::string returnString = "" + std::to_string(numberOfLeafs);
+	auto end = std::chrono::high_resolution_clock::now();
+	float duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+	auto mnps = numberOfLeafs / duration / 1000000. * 60.;
+	std::string returnString = "Positions found: " + std::to_string(numberOfLeafs) + ", Speed = " + std::to_string(mnps) + "Mn/s";
 	return returnString;
 }
 

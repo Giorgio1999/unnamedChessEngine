@@ -1,7 +1,7 @@
 #include "Move.h"
 #include <string>
-#include <list>
 #include <cmath>
+#include <vector>
 
 Coord::Coord(){
 	x = 0;
@@ -28,7 +28,7 @@ Move::Move(int i1, int j1, int i2, int j2) {
 }
 
 std::string Coord2Str(Coord coord) {
-	std::string tmp = "";
+	auto tmp = "";
 	tmp += cols.at(coord.x);
 	tmp += rows.at(coord.y);
 	return tmp;
@@ -69,8 +69,8 @@ Move Str2Move(std::string moveString) {
 	return move;
 }
 
-std::list<Move> Str2Moves(std::string movesString) {
-	std::list<Move> moves;
+std::vector<Move> Str2Moves(std::string movesString) {
+	std::vector<Move> moves;
 	std::string currentMove = "";
 	while (movesString.length() > 0) {
 		std::string currentMove = movesString.substr(0, movesString.find(' '));

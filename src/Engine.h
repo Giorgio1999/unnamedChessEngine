@@ -3,7 +3,7 @@
 #include "Piece.h"
 #include "Move.h"
 #include <string>
-#include <list>
+#include <vector>
 
 //This will include the core functionality
 
@@ -19,15 +19,15 @@ class Engine {
 		void UndoLastMove();				//Reverts to previous position
 		std::string ShowBoard();			//Debug tool to display current board in console
 
-		std::list<Move> GetPseudoLegalMoves();	//Gets Pseudo legal moves
-		void GetPseudoLegalPawnMoves(std::list<Move>& moveList, Piece current, int i, int j);	//function for every piecetype
-		void GetPseudoLegalKnightMoves(std::list<Move>& moveList, Piece current, int i, int j);
-		void GetPseudoLegalBishopMoves(std::list<Move>& moveList, Piece current, int i, int j);
-		void GetPseudoLegalRookMoves(std::list<Move>& moveList, Piece current, int i, int j);
-		void GetPseudoLegalQueenMoves(std::list<Move>& moveList, Piece current, int i, int j);
-		void GetPseudoLegalKingMoves(std::list<Move>& moveList, Piece current, int i, int j);
+		void GetPseudoLegalMoves(std::vector<Move>& moveVector);	//Gets Pseudo legal moves and writes them into the given vector
+		void GetPseudoLegalPawnMoves(std::vector<Move>& moveVector, Piece current, int i, int j);	//function for every piecetype
+		void GetPseudoLegalKnightMoves(std::vector<Move>& moveVector, Piece current, int i, int j);
+		void GetPseudoLegalBishopMoves(std::vector<Move>& moveVector, Piece current, int i, int j);
+		void GetPseudoLegalRookMoves(std::vector<Move>& moveVector, Piece current, int i, int j);
+		void GetPseudoLegalQueenMoves(std::vector<Move>& moveVector, Piece current, int i, int j);
+		void GetPseudoLegalKingMoves(std::vector<Move>& moveVector, Piece current, int i, int j);
 		
-		std::list<Move> GetLegalMoves();
+		void GetLegalMoves(std::vector<Move>& moveVector);
 
 		std::string GetBestMove();
 

@@ -35,11 +35,12 @@ public:
 	std::list<Coord> GetPawnChecks(Coord start, Coord target, bool colorOfMover);		//Returns start if pawn can reach target
 	//^^
 	std::list<std::list<Coord>>& GetCheckLines();
+	bool IsCheck(bool color);	//Checks if the player with color is currently in check
 	bool GetCheck();
 
 private:
 	PieceList board;
-	std::list<PieceList> gameHistory;
+	std::vector<PieceList> gameHistory;
 	std::list<std::list<Coord>> checkLines;
 	bool isCheck = false;			//If player to move is in check
 };

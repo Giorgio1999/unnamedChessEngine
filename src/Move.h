@@ -2,6 +2,7 @@
 #include "Piece.h"
 #include <string>
 #include <list>
+#include <vector>
 
 //Logic for handling moves
 
@@ -37,7 +38,7 @@ std::string Coord2Str(Coord coord);			//Helper functions to convert from human r
 Coord Str2Coord(std::string coordString);
 std::string Move2Str(Move move);
 Move Str2Move(std::string moveString);
-std::list<Move> Str2Moves(std::string movesString);
+std::vector<Move> Str2Moves(std::string movesString);
 int Coord2Index(Coord coord);				//convert between coord and 1d Board index
 bool operator!=(Move lhs, Move rhs);		//To compare moves
 bool operator==(Move lhs, Move rhs);
